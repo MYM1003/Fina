@@ -211,6 +211,50 @@ export function Result({ analysis }: ResultProps) {
               [data-pdf-section] h3 {
                 font-family: 'DM Serif Display', serif !important;
               }
+
+              /* ---- Vertical-alignment normalization for html2canvas ----
+                 DM Sans has larger ascender/descender metrics than Arial, so
+                 html2canvas offsets text inside flex rows. Forcing line-height
+                 to 1 on flex children that are expected to sit on the baseline
+                 (icons, numbered circles, emoji) aligns them with their labels. */
+
+              /* Any flex row with alignItems center: normalize child line-height */
+              [data-pdf-section] [style*="align-items: center"] > *,
+              [data-pdf-section] [style*="align-items:center"] > * {
+                line-height: 1.15 !important;
+              }
+
+              /* Circular badges (numbered 1/2/3/4, level emoji wrappers) */
+              [data-pdf-section] [style*="border-radius: 50%"],
+              [data-pdf-section] [style*="border-radius:50%"] {
+                line-height: 1 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
+              }
+
+              /* Pill/rounded badges (Alcanzable, Requiere ajustes, etc.) */
+              [data-pdf-section] span[style*="border-radius: 12px"],
+              [data-pdf-section] span[style*="border-radius:12px"] {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                line-height: 1 !important;
+              }
+
+              /* Legend color squares next to label text — align to text middle */
+              [data-pdf-section] [style*="border-radius: 4px"] + span,
+              [data-pdf-section] [style*="border-radius:4px"] + span {
+                line-height: 1 !important;
+              }
+
+              /* Emoji characters in headings sit above the baseline; bump them
+                 down slightly so they visually center with the title text. */
+              [data-pdf-section] h1, [data-pdf-section] h2, [data-pdf-section] h3,
+              [data-pdf-section] h4 {
+                line-height: 1.2 !important;
+              }
             `;
             clonedDoc.head.appendChild(style);
           },
