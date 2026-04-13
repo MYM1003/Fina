@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from 'motion/react';
 import { Button } from './ui/button';
+import { g, Gender } from '../utils/gender';
 
 interface ContextProps {
+  gender?: Gender;
   onComplete: (data: { livesAlone: boolean }) => void;
 }
 
-export function Context({ onComplete }: ContextProps) {
+export function Context({ gender, onComplete }: ContextProps) {
   const navigate = useNavigate();
   const [livesAlone, setLivesAlone] = useState<boolean | null>(null);
 
@@ -39,7 +41,7 @@ export function Context({ onComplete }: ContextProps) {
           </div>
 
           <div className="space-y-4">
-            <p className="text-lg mb-6 text-gray-700">¿Vivís sola?</p>
+            <p className="text-lg mb-6 text-gray-700">¿Vivís {g(gender, 'sola', 'solo')}?</p>
             
             <button
               onClick={() => setLivesAlone(true)}
@@ -50,7 +52,7 @@ export function Context({ onComplete }: ContextProps) {
               }`}
             >
               <p className="text-lg" style={{ fontFamily: 'var(--font-sans)' }}>
-                Sí, vivo sola
+                Sí, vivo {g(gender, 'sola', 'solo')}
               </p>
             </button>
 
@@ -63,7 +65,7 @@ export function Context({ onComplete }: ContextProps) {
               }`}
             >
               <p className="text-lg" style={{ fontFamily: 'var(--font-sans)' }}>
-                No, vivo acompañada
+                No, vivo {g(gender, 'acompañada', 'acompañado')}
               </p>
             </button>
           </div>

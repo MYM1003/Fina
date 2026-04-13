@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/button';
 import { FinancialAnalysis } from '../types';
+import { g } from '../utils/gender';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { Download, Flame, TrendingUp, Target, ChevronDown, ChevronUp } from 'lucide-react';
 import jsPDF from 'jspdf';
@@ -891,7 +892,7 @@ export function Result({ analysis }: ResultProps) {
           className="text-center py-8"
         >
           <p className="text-xl text-gray-600 mb-2" style={{ fontFamily: 'var(--font-sans)' }}>
-            No estás sola en esto 💛
+            No estás {g(analysis.userData.gender, 'sola', 'solo')} en esto 💛
           </p>
           <p className="text-gray-500">
             FINA - Finanzas personales con empatía
@@ -1266,7 +1267,7 @@ export function Result({ analysis }: ResultProps) {
         {/* Section 11: Footer motivacional */}
         <div data-pdf-section style={{ padding: '32px 20px', textAlign: 'center', boxSizing: 'border-box', pageBreakInside: 'avoid', overflow: 'visible' }}>
           <p style={{ fontSize: '16px', color: '#718096', marginBottom: '8px', overflow: 'visible' }}>
-            No estás sola en esto 💛
+            No estás {g(analysis.userData.gender, 'sola', 'solo')} en esto 💛
           </p>
           <p style={{ fontSize: '13px', color: '#a0aec0', margin: 0, overflow: 'visible' }}>
             FINA - Finanzas personales con empatía

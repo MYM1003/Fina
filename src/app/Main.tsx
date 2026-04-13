@@ -187,7 +187,7 @@ export function Main() {
     case '/personal-data':
       return <PersonalData onComplete={handlePersonalData} />;
     case '/context':
-      return <Context onComplete={handleContext} />;
+      return <Context gender={userData.gender} onComplete={handleContext} />;
     case '/activity':
       return <Activity onComplete={handleActivity} />;
     case '/bank':

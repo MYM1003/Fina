@@ -1,4 +1,5 @@
 import { UserData, FinancialAnalysis, GoalAnalysis, ReducibleExpense } from '../types';
+import { g } from './gender';
 
 export function analyzeFinances(userData: UserData): FinancialAnalysis {
   const totalIncome = userData.monthlyIncome;
@@ -74,11 +75,12 @@ function determineFinancialLevel(userData: UserData): string {
   const saves = userData.saves;
   const invests = userData.invests;
   
+  const gender = userData.gender;
   if (!hasBanks) return 'Sin bancarizar';
-  if (!hasControl && !saves) return 'Bancarizada, sin control';
+  if (!hasControl && !saves) return `${g(gender, 'Bancarizada', 'Bancarizado')}, sin control`;
   if (hasControl && saves && !invests) return 'Con ahorro, sin inversión';
-  if (invests) return 'Inversora activa';
-  
+  if (invests) return `${g(gender, 'Inversora', 'Inversor')} ${g(gender, 'activa', 'activo')}`;
+
   return 'En construcción';
 }
 
