@@ -6,6 +6,7 @@ export function analyzeFinances(userData: UserData): FinancialAnalysis {
   // Calculate monthly expenses from new data structure
   const monthlyEntertainment = userData.entertainmentFrequency * userData.entertainmentAmount * 4.33;
   const monthlyDelivery = userData.deliveryFrequency * userData.deliveryAmount * 4.33;
+  const monthlySupermarket = (userData.supermarketFrequency || 0) * (userData.supermarketAmount || 0) * 4.33;
   const subscriptionsCost = userData.subscriptions.reduce((sum, sub) => sum + sub.cost, 0);
   const installmentsCost = userData.installments.reduce((sum, inst) => sum + inst.monthlyAmount, 0);
 
@@ -17,6 +18,7 @@ export function analyzeFinances(userData: UserData): FinancialAnalysis {
     subscriptionsCost +
     monthlyDelivery +
     monthlyEntertainment +
+    monthlySupermarket +
     installmentsCost;
     
   const available = totalIncome - totalExpenses;
@@ -193,6 +195,20 @@ function generateReducibleExpenses(userData: UserData, totalIncome: number, mont
     });
   }
 
+  // Supermercado - puntos de compra / hábitos de consumo
+  const monthlySupermarket = (userData.supermarketFrequency || 0) * (userData.supermarketAmount || 0) * 4.33;
+  if (monthlySupermarket > totalIncome * 0.15) {
+    const savingsAmount = Math.round(monthlySupermarket * 0.2);
+    expenses.push({
+      category: 'Supermercado',
+      emoji: '🛒',
+      currentAmount: monthlySupermarket,
+      description: `Gastás **$${monthlySupermarket.toLocaleString('es-AR').replace(/,/g, '.')}/mes** en el súper. Cambiando dónde comprás (mayoristas como Maxiconsumo o Diarco, o días de descuento con tu banco) podés **bajar el ticket 15–25%**. Aprovechá programas de puntos (Carrefour+, Jumbo Más) y hacé lista antes de ir.`,
+      savingsAmount,
+      savingsMessage: `$${savingsPreviewMessage(savingsAmount, 3)}`,
+    });
+  }
+
   // Servicios / Suscripciones - VARIABLE EXPENSE (only if 3+ subscriptions)
   const subscriptionCount = userData.subscriptions.length;
   if (subscriptionsCost > totalIncome * 0.10 && subscriptionCount >= 3) {
@@ -277,6 +293,13 @@ function generateActionPlan(userData: UserData, insights: string[], goalsAnalysi
     } else if (mainIssue.includes('tarjeta')) {
       plan.push('Pagá más del mínimo en la tarjeta. Intentá saldarla en 3-6 meses. Mientras tanto: cero compras en cuotas nuevas.');
     }
+  }
+
+  // Step 3b: Supermarket-specific advice (mejorar puntos de compra)
+  const monthlySuper = (userData.supermarketFrequency || 0) * (userData.supermarketAmount || 0) * 4.33;
+  const totalIncome = userData.monthlyIncome || 1;
+  if (monthlySuper / totalIncome > 0.12) {
+    plan.push('Cambiá dónde hacés las compras: comparar precios entre Día, Coto, Carrefour y mayoristas como Maxiconsumo o Diarco puede bajar tu ticket un 15–25%. Aprovechá los días de descuento de tu banco y programas de puntos (ej: Carrefour+, Jumbo Más).');
   }
 
   // Step 4: Goal-specific action

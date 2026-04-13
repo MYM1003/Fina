@@ -9,16 +9,16 @@ interface BankProps {
 }
 
 const BANKS = [
+  'Mercado Pago',
   'Galicia',
   'Santander',
   'BBVA',
-  'ICBC',
   'Banco Nación',
   'Banco Provincia',
-  'Brubank',
   'Naranja X',
-  'Mercado Pago',
+  'Brubank',
   'Ualá',
+  'ICBC',
   'Otro',
   'No uso banco'
 ];

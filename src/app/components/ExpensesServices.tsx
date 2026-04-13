@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { Switch } from './ui/switch';
-import { Zap, UtensilsCrossed, Sparkles, Plus, X, Check } from 'lucide-react';
+import { Zap, UtensilsCrossed, Sparkles, Plus, X, Check, ShoppingCart } from 'lucide-react';
 
 interface ExpensesServicesProps {
   onComplete: (data: {
@@ -18,11 +18,13 @@ interface ExpensesServicesProps {
     entertainmentAmount: number;
     deliveryFrequency: number;
     deliveryAmount: number;
+    supermarketFrequency: number;
+    supermarketAmount: number;
   }) => void;
 }
 
 const PRESET_SUBSCRIPTIONS = [
-  { name: 'ChatGPT', price: 32000 },
+  { name: 'IA', price: 32000 },
   { name: 'Spotify', price: 4000 },
   { name: 'Netflix', price: 15000 },
   { name: 'Disney+', price: 12000 },
@@ -45,6 +47,11 @@ export function ExpensesServices({ onComplete }: ExpensesServicesProps) {
   const [deliveryFrequency, setDeliveryFrequency] = useState('');
   const [deliveryAmount, setDeliveryAmount] = useState('');
   const [noDelivery, setNoDelivery] = useState(false);
+
+  // Supermarket
+  const [supermarketFrequency, setSupermarketFrequency] = useState('');
+  const [supermarketAmount, setSupermarketAmount] = useState('');
+  const [noSupermarket, setNoSupermarket] = useState(false);
 
   const toggleSubscription = (name: string) => {
     const newSelected = new Set(selectedSubscriptions);
@@ -115,6 +122,8 @@ export function ExpensesServices({ onComplete }: ExpensesServicesProps) {
       entertainmentAmount: parseInt(entertainmentAmount.replace(/\D/g, '') || '0'),
       deliveryFrequency: parseFloat(deliveryFrequency) || 0,
       deliveryAmount: parseInt(deliveryAmount.replace(/\D/g, '') || '0'),
+      supermarketFrequency: parseFloat(supermarketFrequency) || 0,
+      supermarketAmount: parseInt(supermarketAmount.replace(/\D/g, '') || '0'),
     });
 
     navigate('/habits');
@@ -123,6 +132,7 @@ export function ExpensesServices({ onComplete }: ExpensesServicesProps) {
   const isValid =
     (noEntertainment || (entertainmentFrequency !== '' && entertainmentAmount !== '')) &&
     (noDelivery || (deliveryFrequency !== '' && deliveryAmount !== '')) &&
+    (noSupermarket || (supermarketFrequency !== '' && supermarketAmount !== '')) &&
     // All custom subscriptions must have both name and cost
     customSubscriptions.every(sub => !sub.name || (sub.name && sub.cost));
 
@@ -402,6 +412,85 @@ export function ExpensesServices({ onComplete }: ExpensesServicesProps) {
                     className="w-full"
                     disabled={noDelivery}
                     style={{ backgroundColor: noDelivery ? '#f3f3f5' : 'white' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Supermarket Section */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#D4537E]/20">
+                  <ShoppingCart className="w-5 h-5 text-[#D4537E]" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg text-[#D4537E]" style={{ fontFamily: 'var(--font-sans)' }}>
+                    Supermercado
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">No aplica</span>
+                  <Switch
+                    checked={noSupermarket}
+                    onCheckedChange={(checked) => {
+                      setNoSupermarket(checked);
+                      if (checked) {
+                        setSupermarketFrequency('0');
+                        setSupermarketAmount('0');
+                      }
+                    }}
+                    className="data-[state=checked]:bg-[#D4537E]"
+                  />
+                </div>
+              </div>
+
+              {noSupermarket && (
+                <div className="mb-3 px-3 py-1.5 bg-gray-100 rounded-lg inline-block">
+                  <span className="text-xs text-gray-600">No aplica</span>
+                </div>
+              )}
+
+              <div className="space-y-4" style={{ opacity: noSupermarket ? 0.4 : 1, pointerEvents: noSupermarket ? 'none' : 'auto' }}>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-2">
+                    ¿Cuántas veces por semana hacés compras en el súper?
+                  </label>
+                  <Input
+                    type="number"
+                    inputMode="decimal"
+                    step="0.5"
+                    value={supermarketFrequency}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      if (val >= 0 || e.target.value === '') {
+                        setSupermarketFrequency(e.target.value);
+                      }
+                    }}
+                    placeholder="Ej: 1"
+                    min="0"
+                    className="w-full"
+                    disabled={noSupermarket}
+                    style={{ backgroundColor: noSupermarket ? '#f3f3f5' : 'white' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-600 mb-2">
+                    ¿Cuánto gastás aproximadamente por compra?
+                  </label>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={supermarketAmount}
+                    onChange={(e) => {
+                      const numbers = e.target.value.replace(/\D/g, '');
+                      setSupermarketAmount(numbers);
+                    }}
+                    placeholder="$0"
+                    className="w-full"
+                    disabled={noSupermarket}
+                    style={{ backgroundColor: noSupermarket ? '#f3f3f5' : 'white' }}
                   />
                 </div>
               </div>

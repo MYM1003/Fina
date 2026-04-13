@@ -1,16 +1,82 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from 'motion/react';
 import { Button } from './ui/button';
 import { FinancialAnalysis } from '../types';
-import { Brain, TrendingUp, Calculator, Target, Lightbulb, AlertCircle } from 'lucide-react';
+import { Brain, TrendingUp, Calculator, Target, Lightbulb, AlertCircle, History, User } from 'lucide-react';
 
 interface AIReasoningProps {
   analysis: FinancialAnalysis | null;
 }
 
+interface HistoryEntry {
+  timestamp: string;
+  profile: { name: string; age: string; email: string; gender: string };
+  snapshot: {
+    totalIncome: number;
+    totalExpenses: number;
+    available: number;
+    financialLevel: string;
+    reduciblePercentage: number;
+    insights: string[];
+    recommendedInvestments: string[];
+    actionPlan: string[];
+  };
+}
+
+const HISTORY_KEY = 'fina_ai_reasoning_history_v1';
+
+function loadHistory(): Record<string, HistoryEntry[]> {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveHistoryEntry(email: string, entry: HistoryEntry) {
+  const all = loadHistory();
+  const key = email.trim().toLowerCase() || 'anonymous';
+  all[key] = [entry, ...(all[key] || [])].slice(0, 20);
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(all));
+  } catch {
+    /* quota exceeded — ignore */
+  }
+}
+
 export function AIReasoning({ analysis }: AIReasoningProps) {
   const navigate = useNavigate();
-  
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+
+  useEffect(() => {
+    if (!analysis) return;
+    const entry: HistoryEntry = {
+      timestamp: new Date().toISOString(),
+      profile: {
+        name: analysis.userData.name,
+        age: analysis.userData.age,
+        email: analysis.userData.email,
+        gender: analysis.userData.gender || 'prefiero_no_decir',
+      },
+      snapshot: {
+        totalIncome: analysis.totalIncome,
+        totalExpenses: analysis.totalExpenses,
+        available: analysis.available,
+        financialLevel: analysis.financialLevel,
+        reduciblePercentage: analysis.reduciblePercentage,
+        insights: analysis.insights,
+        recommendedInvestments: analysis.recommendedInvestments,
+        actionPlan: analysis.actionPlan,
+      },
+    };
+    saveHistoryEntry(analysis.userData.email, entry);
+    const all = loadHistory();
+    const key = (analysis.userData.email || '').trim().toLowerCase() || 'anonymous';
+    setHistory(all[key] || []);
+  }, [analysis]);
+
   if (!analysis) {
     return (
       <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
@@ -105,6 +171,35 @@ export function AIReasoning({ analysis }: AIReasoningProps) {
           </div>
 
           <div className="space-y-6">
+            {/* 0. Perfil del usuario */}
+            <section className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <User className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-xl text-cyan-400">0. Perfil del usuario</h3>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <p className="text-gray-400">Nombre:</p>
+                  <p className="text-white">{userData.name || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400">Edad:</p>
+                  <p className="text-white">{userData.age || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400">Email:</p>
+                  <p className="text-white break-all">{userData.email || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400">Género:</p>
+                  <p className="text-white">{userData.gender || '—'}</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-3">
+                Categorización: estos campos se usan para segmentar y validar el comportamiento del razonamiento.
+              </p>
+            </section>
+
             {/* 1. Interpreted Data */}
             <section className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <div className="flex items-center gap-2 mb-4">
@@ -287,6 +382,47 @@ export function AIReasoning({ analysis }: AIReasoningProps) {
                   <p className="text-gray-400">No se definieron objetivos específicos</p>
                 )}
               </div>
+            </section>
+            {/* 6. Historial de razonamientos por usuario */}
+            <section className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <History className="w-5 h-5 text-orange-400" />
+                <h3 className="text-xl text-orange-400">6. Historial de cálculos</h3>
+              </div>
+              <p className="text-xs text-gray-500 mb-4">
+                Registros guardados localmente para <span className="text-white">{userData.email || 'anonymous'}</span> ({history.length})
+              </p>
+              {history.length === 0 ? (
+                <p className="text-gray-400 text-sm">Sin entradas previas.</p>
+              ) : (
+                <div className="space-y-3">
+                  {history.map((entry, idx) => (
+                    <div key={idx} className="bg-gray-900 p-4 rounded border border-gray-700">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs text-gray-400">
+                          {new Date(entry.timestamp).toLocaleString('es-AR')}
+                        </span>
+                        <span className="text-xs text-cyan-400">
+                          {entry.profile.gender} · {entry.profile.age} años
+                        </span>
+                      </div>
+                      <div className="text-sm space-y-1">
+                        <p>
+                          Ingreso: ${entry.snapshot.totalIncome.toLocaleString('es-AR').replace(/,/g, '.')} ·
+                          Gastos: ${entry.snapshot.totalExpenses.toLocaleString('es-AR').replace(/,/g, '.')} ·
+                          Disponible: ${entry.snapshot.available.toLocaleString('es-AR').replace(/,/g, '.')}
+                        </p>
+                        <p className="text-xs text-gray-400">Nivel: {entry.snapshot.financialLevel}</p>
+                        {entry.snapshot.insights.length > 0 && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Insights: {entry.snapshot.insights.slice(0, 2).join(' · ')}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           </div>
         </motion.div>

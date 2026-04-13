@@ -5,22 +5,25 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 
+type Gender = 'femenino' | 'masculino' | 'prefiero_no_decir';
+
 interface PersonalDataProps {
-  onComplete: (data: { name: string; age: string; email: string }) => void;
+  onComplete: (data: { name: string; age: string; email: string; gender: Gender }) => void;
 }
 
 export function PersonalData({ onComplete }: PersonalDataProps) {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{ name: string; age: string; email: string; gender: Gender | '' }>({
     name: '',
     age: '',
-    email: ''
+    email: '',
+    gender: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name && formData.age && formData.email) {
-      onComplete(formData);
+    if (formData.name && formData.age && formData.email && formData.gender) {
+      onComplete({ ...formData, gender: formData.gender as Gender });
       navigate('/context');
     }
   };
@@ -100,9 +103,36 @@ export function PersonalData({ onComplete }: PersonalDataProps) {
               />
             </div>
 
+            <div>
+              <Label className="text-gray-700">
+                ¿Con qué género te identificás?
+              </Label>
+              <div className="mt-2 grid grid-cols-1 gap-2">
+                {([
+                  { value: 'femenino', label: 'Femenino' },
+                  { value: 'masculino', label: 'Masculino' },
+                  { value: 'prefiero_no_decir', label: 'Prefiero no decir' },
+                ] as { value: Gender; label: string }[]).map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, gender: opt.value })}
+                    className={`text-left px-4 py-3 rounded-xl border-2 transition-all ${
+                      formData.gender === opt.value
+                        ? 'border-[#D4537E] bg-[#FBEAF0] text-[#D4537E]'
+                        : 'border-gray-200 bg-white text-gray-700 hover:border-[#D4537E]/50'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <Button
               type="submit"
-              className="w-full bg-[#D4537E] hover:bg-[#C14870] text-white py-6 rounded-full text-lg mt-8"
+              disabled={!formData.name || !formData.age || !formData.email || !formData.gender}
+              className="w-full bg-[#D4537E] hover:bg-[#C14870] text-white py-6 rounded-full text-lg mt-8 disabled:opacity-50"
             >
               Continuar
             </Button>

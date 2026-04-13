@@ -55,6 +55,9 @@ export function Main() {
     entertainmentAmount: 0,
     deliveryFrequency: 0,
     deliveryAmount: 0,
+    supermarketFrequency: 0,
+    supermarketAmount: 0,
+    gender: 'prefiero_no_decir',
     knowsLastMonthExpenses: false,
     saves: false,
     invests: false,
@@ -71,7 +74,16 @@ export function Main() {
     }
   }, []);
 
-  const handlePersonalData = (data: { name: string; age: string; email: string }) => {
+  // Scroll to top whenever the route (section) changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    // Also reset any internal scroll containers the pages may use
+    document.querySelectorAll('.overflow-y-auto').forEach((el) => {
+      (el as HTMLElement).scrollTop = 0;
+    });
+  }, [location.pathname]);
+
+  const handlePersonalData = (data: { name: string; age: string; email: string; gender: 'femenino' | 'masculino' | 'prefiero_no_decir' }) => {
     setUserData(prev => ({ ...prev, ...data }));
   };
 
@@ -149,6 +161,8 @@ export function Main() {
     entertainmentAmount: number;
     deliveryFrequency: number;
     deliveryAmount: number;
+    supermarketFrequency: number;
+    supermarketAmount: number;
   }) => {
     setUserData(prev => ({ ...prev, ...data }));
   };

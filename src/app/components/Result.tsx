@@ -12,48 +12,59 @@ import './PDFStyles.css';
 interface InvestmentDefinition {
   oneLiner: string;
   expanded: string;
+  where: string; // Dónde se puede invertir (plataformas concretas en Argentina)
 }
 
 const INVESTMENT_DEFINITIONS: Record<string, InvestmentDefinition> = {
   'Cuenta remunerada': {
     oneLiner: 'Tu plata en la app rinde sola, todos los días.',
-    expanded: 'Es como una caja de ahorro, pero tu saldo genera intereses automáticamente cada 24 horas. No tenés que hacer nada — depositás, y el dinero trabaja solo. Podés retirar cuando quieras, sin fechas fijas ni penalidades. Ideal si necesitás tener el dinero disponible en cualquier momento.'
+    expanded: 'Es como una caja de ahorro, pero tu saldo genera intereses automáticamente cada 24 horas. No tenés que hacer nada — depositás, y el dinero trabaja solo. Podés retirar cuando quieras, sin fechas fijas ni penalidades. Ideal si necesitás tener el dinero disponible en cualquier momento.',
+    where: 'Mercado Pago, Ualá, Brubank, Naranja X, Personal Pay. También las cuentas remuneradas de Galicia (Move) y Santander.'
   },
   'Plazo fijo tradicional': {
     oneLiner: 'Bloqueás tu plata 30 días y te devuelven más.',
-    expanded: 'Acordás con el banco guardar una suma fija por 30 días (o más). A cambio, te pagan una tasa de interés garantizada al vencimiento. El dinero no está disponible durante ese tiempo — si lo necesitás antes, perdés los intereses. Es la opción más predecible: sabés exactamente cuánto vas a recibir.'
+    expanded: 'Acordás con el banco guardar una suma fija por 30 días (o más). A cambio, te pagan una tasa de interés garantizada al vencimiento. El dinero no está disponible durante ese tiempo — si lo necesitás antes, perdés los intereses. Es la opción más predecible: sabés exactamente cuánto vas a recibir.',
+    where: 'Homebanking de cualquier banco (Galicia, Santander, BBVA, Nación, Provincia, Macro). También desde Mercado Pago y Ualá. Comparar tasas en plazofijo.bcra.gob.ar.'
   },
   'Plazo fijo UVA': {
     oneLiner: 'Tus ahorros se ajustan a la inflación automáticamente.',
-    expanded: 'Funciona igual que un plazo fijo tradicional, pero en vez de una tasa fija, tu dinero se actualiza según el índice de inflación (UVA). Si los precios suben, tu ahorro también sube en la misma proporción. Mínimo 90 días. Ideal para no perder poder adquisitivo en contextos de inflación alta.'
+    expanded: 'Funciona igual que un plazo fijo tradicional, pero en vez de una tasa fija, tu dinero se actualiza según el índice de inflación (UVA). Si los precios suben, tu ahorro también sube en la misma proporción. Mínimo 90 días. Ideal para no perder poder adquisitivo en contextos de inflación alta.',
+    where: 'Homebanking de bancos tradicionales: Galicia, Santander, BBVA, Nación, Provincia, Macro, ICBC. Buscá la opción "Plazo fijo UVA" dentro de inversiones.'
   },
   'Fondo común de inversión Money Market': {
     oneLiner: 'Un grupo de personas juntan plata y la invierten juntas.',
-    expanded: 'Es un fondo donde miles de inversores aportan dinero, y un equipo profesional lo invierte en instrumentos de muy bajo riesgo (letras del Tesoro, plazos fijos, etc.). Vos comprás "cuotapartes" del fondo. Rinde más que una caja de ahorro, tenés liquidez en 24–48hs, y no necesitás saber nada de inversiones para usarlo.'
+    expanded: 'Es un fondo donde miles de inversores aportan dinero, y un equipo profesional lo invierte en instrumentos de muy bajo riesgo (letras del Tesoro, plazos fijos, etc.). Vos comprás "cuotapartes" del fondo. Rinde más que una caja de ahorro, tenés liquidez en 24–48hs, y no necesitás saber nada de inversiones para usarlo.',
+    where: 'Cocos Capital, Balanz, IOL (InvertirOnline), Bull Market Brokers, Portfolio Personal. También en las apps de Mercado Pago y Ualá (fondo automático).'
   },
   'Fondo común de inversión mixto': {
     oneLiner: 'Un grupo de personas juntan plata y la invierten juntas.',
-    expanded: 'Es un fondo donde miles de inversores aportan dinero, y un equipo profesional lo invierte en instrumentos de muy bajo riesgo (letras del Tesoro, plazos fijos, etc.). Vos comprás "cuotapartes" del fondo. Rinde más que una caja de ahorro, tenés liquidez en 24–48hs, y no necesitás saber nada de inversiones para usarlo.'
+    expanded: 'Es un fondo donde miles de inversores aportan dinero, y un equipo profesional lo invierte en instrumentos de muy bajo riesgo (letras del Tesoro, plazos fijos, etc.). Vos comprás "cuotapartes" del fondo. Rinde más que una caja de ahorro, tenés liquidez en 24–48hs, y no necesitás saber nada de inversiones para usarlo.',
+    where: 'Cocos Capital, Balanz, IOL (InvertirOnline), Bull Market Brokers, Portfolio Personal. Elegí FCI con perfil "mixto" o "moderado".'
   },
   'Fondo común de inversión acciones': {
     oneLiner: 'Mayor potencial de ganancia, con más riesgo.',
-    expanded: 'Similar al Money Market, pero el fondo invierte en acciones y bonos, no solo en instrumentos seguros. El rendimiento puede ser mucho mayor a largo plazo, pero también puede bajar. Recomendado solo si tu objetivo es a más de 12 meses y tolerás que el valor fluctúe mes a mes.'
+    expanded: 'Similar al Money Market, pero el fondo invierte en acciones y bonos, no solo en instrumentos seguros. El rendimiento puede ser mucho mayor a largo plazo, pero también puede bajar. Recomendado solo si tu objetivo es a más de 12 meses y tolerás que el valor fluctúe mes a mes.',
+    where: 'Cocos Capital, Balanz, IOL (InvertirOnline), Bull Market Brokers, Portfolio Personal. Buscá FCI de "Renta Variable" o "Acciones".'
   },
   'CEDEARs diversificados': {
     oneLiner: 'Comprás pedacitos de empresas como Apple o Amazon, en pesos.',
-    expanded: 'Los CEDEARs son certificados que representan acciones de empresas extranjeras (Apple, Amazon, Google, etc.) pero se compran en Argentina con pesos. Tu inversión queda atada al precio de esas acciones Y al tipo de cambio, por lo que funcionan como cobertura contra la devaluación. Son para horizontes de más de 1 año y aceptando que el valor puede subir o bajar.'
+    expanded: 'Los CEDEARs son certificados que representan acciones de empresas extranjeras (Apple, Amazon, Google, etc.) pero se compran en Argentina con pesos. Tu inversión queda atada al precio de esas acciones Y al tipo de cambio, por lo que funcionan como cobertura contra la devaluación. Son para horizontes de más de 1 año y aceptando que el valor puede subir o bajar.',
+    where: 'Cocos Capital, IOL (InvertirOnline), Balanz, Bull Market Brokers, Portfolio Personal, PPI. Buscá ETFs como SPY (S&P 500) o QQQ (Nasdaq) para diversificar.'
   },
   'Bonos CER': {
     oneLiner: 'Tus ahorros se ajustan a la inflación automáticamente.',
-    expanded: 'Funciona igual que un plazo fijo tradicional, pero en vez de una tasa fija, tu dinero se actualiza según el índice de inflación (UVA). Si los precios suben, tu ahorro también sube en la misma proporción. Mínimo 90 días. Ideal para no perder poder adquisitivo en contextos de inflación alta.'
+    expanded: 'Funciona igual que un plazo fijo tradicional, pero en vez de una tasa fija, tu dinero se actualiza según el índice de inflación (UVA). Si los precios suben, tu ahorro también sube en la misma proporción. Mínimo 90 días. Ideal para no perder poder adquisitivo en contextos de inflación alta.',
+    where: 'Cocos Capital, IOL (InvertirOnline), Balanz, Bull Market Brokers, Portfolio Personal. Buscá bonos como TX26, TX28 o T2X5.'
   },
   'Bonos largos': {
     oneLiner: 'Tus ahorros se ajustan a la inflación automáticamente.',
-    expanded: 'Funciona igual que un plazo fijo tradicional, pero en vez de una tasa fija, tu dinero se actualiza según el índice de inflación (UVA). Si los precios suben, tu ahorro también sube en la misma proporción. Mínimo 90 días. Ideal para no perder poder adquisitivo en contextos de inflación alta.'
+    expanded: 'Funciona igual que un plazo fijo tradicional, pero en vez de una tasa fija, tu dinero se actualiza según el índice de inflación (UVA). Si los precios suben, tu ahorro también sube en la misma proporción. Mínimo 90 días. Ideal para no perder poder adquisitivo en contextos de inflación alta.',
+    where: 'Cocos Capital, IOL (InvertirOnline), Balanz, Bull Market Brokers, Portfolio Personal. Consultá con el bróker qué bonos soberanos largos conviene al momento.'
   },
   'Billetera virtual': {
     oneLiner: 'Dejás la plata en la app y genera interés solo.',
-    expanded: 'El saldo que tenés en la billetera genera rendimiento automático todos los días, sin que hagas nada. Es la opción con menos fricción: no hay que "invertir" de forma activa. La tasa es menor que otras opciones, pero el dinero está siempre disponible para gastar, transferir o retirar.'
+    expanded: 'El saldo que tenés en la billetera genera rendimiento automático todos los días, sin que hagas nada. Es la opción con menos fricción: no hay que "invertir" de forma activa. La tasa es menor que otras opciones, pero el dinero está siempre disponible para gastar, transferir o retirar.',
+    where: 'Mercado Pago, Ualá, Naranja X, Personal Pay, Prex. Ya tenés el rendimiento activado por default sobre tu saldo.'
   }
 };
 
@@ -776,6 +787,16 @@ export function Result({ analysis }: ResultProps) {
                                   <p className="text-sm text-[#72243E] leading-relaxed break-words">
                                     {definition.expanded}
                                   </p>
+                                  {definition.where && (
+                                    <div className="mt-3 pt-3 border-t border-[#D4537E]/20">
+                                      <p className="text-xs font-semibold text-[#D4537E] mb-1">
+                                        ¿Dónde se puede invertir?
+                                      </p>
+                                      <p className="text-sm text-[#72243E] leading-relaxed break-words">
+                                        {definition.where}
+                                      </p>
+                                    </div>
+                                  )}
                                 </div>
                               </motion.div>
                             )}
@@ -1100,10 +1121,14 @@ export function Result({ analysis }: ResultProps) {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', overflow: 'visible', flexWrap: 'wrap' }}>
                   <span style={{
-                    padding: '4px 10px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '6px 12px',
                     borderRadius: '12px',
                     fontSize: '11px',
-                    fontWeight: '500',
+                    fontWeight: 500,
+                    lineHeight: 1,
                     backgroundColor: goal.status === 'possible' ? '#3B6D11' : '#D85A30',
                     color: '#ffffff',
                     overflow: 'visible'

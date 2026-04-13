@@ -17,6 +17,7 @@ export interface UserData {
   name: string;
   age: string;
   email: string;
+  gender: 'femenino' | 'masculino' | 'prefiero_no_decir';
 
   // Context
   livesAlone: boolean;
@@ -61,6 +62,8 @@ export interface UserData {
   entertainmentAmount: number; // gasto por salida
   deliveryFrequency: number; // veces por semana
   deliveryAmount: number; // gasto por pedido
+  supermarketFrequency: number; // veces por semana que va al super
+  supermarketAmount: number; // gasto por visita al super
 
   // Habits
   knowsLastMonthExpenses: boolean;
