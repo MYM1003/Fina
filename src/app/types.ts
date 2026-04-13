@@ -1,0 +1,111 @@
+export interface TransportData {
+  hasCar: boolean;
+  insurance: number;
+  fuel: number;
+  insuranceNotPaying: boolean;
+  fuelNotPaying: boolean;
+  hasPublicTransport: boolean;
+  publicTransportTrips: number;
+  publicTransportCostPerTrip: number;
+  hasRideApps: boolean;
+  rideAppTrips: number;
+  rideAppCostPerTrip: number;
+}
+
+export interface UserData {
+  // Personal data
+  name: string;
+  age: string;
+  email: string;
+
+  // Context
+  livesAlone: boolean;
+
+  // Activity
+  worksOrStudies: 'works' | 'studies' | 'both' | 'neither';
+  monthlyIncome: number;
+
+  // Bank
+  banks: string[];
+
+  // Expenses
+  expenses: {
+    housing: number; // Alquiler
+    health: number; // Salud
+    transport: number; // Transporte / movilidad (calculated from transportDetails)
+    services: number; // Deprecated - ahora se usa subscriptions
+    food: number; // Deprecated - ahora se calcula desde delivery
+    entertainment: number; // Deprecated - ahora se calcula desde entretenimiento
+    creditCard: number; // Deprecated - ahora se usa installments
+  };
+
+  // Transport details
+  transportDetails: TransportData;
+
+  // Fixed expenses details - Installments (múltiples cuotas)
+  installments: Array<{
+    name: string; // Nombre / descripción de la cuota
+    monthlyAmount: number; // Monto mensual de esta cuota
+    remainingInstallments: number; // Cantidad de cuotas restantes
+  }>;
+
+  // Services/Subscriptions
+  subscriptions: Array<{
+    name: string;
+    cost: number;
+    isCustom: boolean;
+  }>;
+
+  // Consumption habits
+  entertainmentFrequency: number; // veces por semana
+  entertainmentAmount: number; // gasto por salida
+  deliveryFrequency: number; // veces por semana
+  deliveryAmount: number; // gasto por pedido
+
+  // Habits
+  knowsLastMonthExpenses: boolean;
+  saves: boolean;
+  invests: boolean;
+
+  // Goals
+  goals: string[];
+  specificGoals: Array<{
+    title: string;
+    amount: number;
+    timeframe: number; // months
+  }>;
+}
+
+export interface GoalAnalysis {
+  title: string;
+  amount: number;
+  timeframe: number;
+  monthlyRequired: number;
+  status: 'possible' | 'tight' | 'not_possible';
+  insight: string;
+  progress: number; // 0-100, siempre 0 en MVP inicial
+}
+
+export interface ReducibleExpense {
+  category: string;
+  emoji: string;
+  currentAmount: number;
+  description: string;
+  savingsAmount: number;
+  savingsMessage: string;
+}
+
+export interface FinancialAnalysis {
+  userData: UserData;
+  totalIncome: number;
+  totalExpenses: number;
+  available: number;
+  financialLevel: string;
+  insights: string[];
+  reduciblePercentage: number;
+  goalsAnalysis: GoalAnalysis[];
+  reducibleExpenses: ReducibleExpense[];
+  totalSavingsPotential: number;
+  recommendedInvestments: string[];
+  actionPlan: string[];
+}
