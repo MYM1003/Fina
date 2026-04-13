@@ -142,7 +142,14 @@ export function Result({ analysis }: ResultProps) {
     setIsGeneratingPDF(true);
 
     try {
-      // Wait for all fonts to load
+      // Force-load the DM fonts in all the weights/styles we use in the PDF,
+      // then wait for document.fonts.ready. Without this, html2canvas can
+      // capture the page before Google Fonts finish loading and fall back to Arial.
+      await Promise.all([
+        (document as any).fonts.load('400 14px "DM Sans"'),
+        (document as any).fonts.load('700 14px "DM Sans"'),
+        (document as any).fonts.load('400 18px "DM Serif Display"'),
+      ]).catch(() => { /* ignore — fallback will apply */ });
       await document.fonts.ready;
 
       // PDF configuration
@@ -173,6 +180,29 @@ export function Result({ analysis }: ResultProps) {
           logging: false,
           windowWidth: 1200,
           windowHeight: 1754,
+          onclone: (clonedDoc) => {
+            // Ensure Google Fonts are present in the cloned document used by
+            // html2canvas for rendering, and force DM Sans as the default
+            // font for every element inside the captured section.
+            const link = clonedDoc.createElement('link');
+            link.rel = 'stylesheet';
+            link.href =
+              'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap';
+            clonedDoc.head.appendChild(link);
+
+            const style = clonedDoc.createElement('style');
+            style.textContent = `
+              [data-pdf-section], [data-pdf-section] * {
+                font-family: 'DM Sans', sans-serif !important;
+              }
+              [data-pdf-section] h1,
+              [data-pdf-section] h2,
+              [data-pdf-section] h3 {
+                font-family: 'DM Serif Display', serif !important;
+              }
+            `;
+            clonedDoc.head.appendChild(style);
+          },
         });
 
         const imgData = canvas.toDataURL('image/png');
@@ -815,7 +845,7 @@ export function Result({ analysis }: ResultProps) {
           maxWidth: '900px',
           backgroundColor: 'rgb(255, 255, 255)',
           overflow: 'visible',
-          fontFamily: 'Arial, sans-serif',
+          fontFamily: "'DM Sans', sans-serif",
           color: 'rgb(0, 0, 0)',
           zIndex: -1,
         }}
@@ -978,8 +1008,30 @@ export function Result({ analysis }: ResultProps) {
           <h3 style={{ fontSize: '18px', color: '#D4537E', marginBottom: '16px', overflow: 'visible' }}>
             Potencial de ahorro
           </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', overflow: 'visible' }}>
-            {/* Simple visual representation */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px', overflow: 'visible' }}>
+            {/* Static SVG pie chart — renders reliably in html2canvas */}
+            {(() => {
+              const pct = Math.max(0, Math.min(100, analysis.reduciblePercentage));
+              const r = 70;
+              const cx = 80;
+              const cy = 80;
+              const angle = (pct / 100) * 2 * Math.PI;
+              const x = cx + r * Math.sin(angle);
+              const y = cy - r * Math.cos(angle);
+              const largeArc = pct > 50 ? 1 : 0;
+              const reduciblePath =
+                pct >= 100
+                  ? `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.01} ${cy - r} Z`
+                  : pct <= 0
+                  ? ''
+                  : `M ${cx} ${cy} L ${cx} ${cy - r} A ${r} ${r} 0 ${largeArc} 1 ${x} ${y} Z`;
+              return (
+                <svg width="160" height="160" viewBox="0 0 160 160" style={{ flexShrink: 0 }}>
+                  <circle cx={cx} cy={cy} r={r} fill="#3B6D11" />
+                  {reduciblePath && <path d={reduciblePath} fill="#D85A30" />}
+                </svg>
+              );
+            })()}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, overflow: 'visible' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'visible' }}>
                 <div style={{ width: '20px', height: '20px', backgroundColor: '#D85A30', borderRadius: '4px' }}></div>
